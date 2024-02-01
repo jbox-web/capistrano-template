@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Capistrano
   module Template
     module Helpers
@@ -5,7 +7,7 @@ module Capistrano
         attr_accessor :paths
 
         def initialize(paths, context)
-          super context
+          super(context)
           self.paths = paths
         end
 

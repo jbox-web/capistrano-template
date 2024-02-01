@@ -1,11 +1,14 @@
+# frozen_string_literal: true
+
 module Capistrano
   module Template
     module Helpers
       class Renderer < SimpleDelegator
-        attr_accessor :from, :reader, :locals
+        attr_accessor :from, :reader
+        attr_reader :locals
 
         def initialize(from, context, reader: File, locals: {})
-          super context
+          super(context)
 
           self.from = from
           self.reader = reader
@@ -14,24 +17,32 @@ module Capistrano
 
         def locals=(new_locals)
           new_locals ||= {}
-          new_locals = new_locals.each_with_object({}) { |(key, value), result| result[key.to_sym] = value }
+          new_locals = new_locals.transform_keys(&:to_sym)
           @locals = new_locals
         end
 
+        def rendered_template
+          @rendered_template ||= ERB.new(template_content, trim_mode: "-").result(Kernel.binding)
+        end
+
         def as_str
-          @rendered_template ||= ERB.new(template_content, trim_mode: '-').result(Kernel.binding)
+          rendered_template
         end
 
         def as_io
           StringIO.new(as_str)
         end
 
-        def method_missing(m, *args, &block)
-          if locals.key?(m)
-            locals[m]
+        def method_missing(method_name, *args, &block)
+          if locals.key?(method_name)
+            locals[method_name]
           else
             super
           end
+        end
+
+        def respond_to_missing?(method_name, include_private = false)
+          locals.key?(method_name) || super
         end
 
         def render(from, indent: 0, locals: {})
@@ -43,14 +54,6 @@ module Capistrano
 
         def indented_content(content, indent)
           content.split("\n").map { |line| "#{' ' * indent}#{line}" }.join("\n")
-        end
-
-        def respond_to_missing?(m, include_private)
-          if locals.key?(m)
-            true
-          else
-            super
-          end
         end
 
         protected

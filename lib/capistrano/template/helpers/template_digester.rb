@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Capistrano
   module Template
     module Helpers
@@ -5,7 +7,7 @@ module Capistrano
         attr_accessor :digest_algo
 
         def initialize(renderer, digest_algo)
-          super renderer
+          super(renderer)
 
           self.digest_algo = digest_algo
         end

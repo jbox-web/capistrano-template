@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 module Capistrano
   module Template
     module Helpers
       module DSL
-        # rubocop: disable Metrics/AbcSize
-        def template(from, to = nil, mode = 0640, user = nil, group = nil, locals: {})
-          fail ::ArgumentError, "template #{from} not found Paths: #{template_paths_lookup.paths_for_file(from).join(':')}" unless template_exists?(from)
+        # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        def template(from, to = nil, mode = 0o640, user = nil, group = nil, locals: {})
+          raise ArgumentError, "template #{from} not found Paths: #{template_paths_lookup.paths_for_file(from).join(':')}" unless template_exists?(from)
 
           return if dry_run?
 
@@ -19,10 +21,9 @@ module Capistrano
                                  mode: mode,
                                  user: user,
                                  group: group,
-                                 io: template.as_io
-                                ).call
+                                 io: template.as_io).call
         end
-        # rubocop: enable Metrics/AbcSize
+        # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
         def template_exists?(template)
           template_paths_lookup.template_exists?(template)
@@ -44,7 +45,7 @@ module Capistrano
           ->(*args) { PathsLookup.new(*args) }
         end
 
-        def remote_path_for(path, includes_filename = false)
+        def remote_path_for(path, includes_filename: false)
           filename = nil
 
           if includes_filename
@@ -61,15 +62,19 @@ module Capistrano
         end
 
         def _template_factory
-          ->(from, context, digester, locals) {TemplateDigester.new(Renderer.new(from, context, locals: locals), digester) }
+          ->(from, context, digester, locals) { TemplateDigester.new(Renderer.new(from, context, locals: locals), digester) }
         end
 
-        def method_missing(method_name, *args)
-          if self.class.respond_to? method_name
-            self.class.send(method_name, *args)
+        def method_missing(method_name, *args, &block)
+          if self.class.respond_to?(method_name)
+            self.class.send(method_name, *args, &block)
           else
             super
           end
+        end
+
+        def respond_to_missing?(method_name, include_private = false)
+          self.class.respond_to?(method_name) || super
         end
 
         def dry_run?
@@ -82,7 +87,7 @@ module Capistrano
 
         def get_to(to, from)
           to ||= "#{release_path}/#{File.basename(from, '.erb')}"
-          remote_path_for(to, true)
+          remote_path_for(to, includes_filename: true)
         end
       end
     end

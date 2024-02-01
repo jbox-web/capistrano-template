@@ -1,17 +1,19 @@
-require 'capistrano/template'
-require 'sshkit/all'
+# frozen_string_literal: true
+
+require "capistrano/template"
+require "sshkit/all"
 
 # don't pollute global namespace
-extend Capistrano::Template::Helpers::DSL
+extend Capistrano::Template::Helpers::DSL # rubocop:disable Style/MixinUsage
 
-SSHKit::Backend::Netssh.send(:include, Capistrano::Template::Helpers::DSL)
+SSHKit::Backend::Netssh.include Capistrano::Template::Helpers::DSL
 
-# rubocop: disable  Lint/HandleExceptions
+# rubocop:disable Lint/SuppressedException
 begin
-  require 'sshkit/backend/printer'
-  SSHKit::Backend::Printer.send(:include, Capistrano::Template::Helpers::DSL)
+  require "sshkit/backend/printer"
+  SSHKit::Backend::Printer.include Capistrano::Template::Helpers::DSL
 rescue LoadError
 end
-# rubocop: enable  Lint/HandleExceptions
+# rubocop:enable Lint/SuppressedException
 
-import File.join(__dir__, 'template', 'tasks', 'template_defaults.rake')
+import File.join(__dir__, "template", "tasks", "template_defaults.rake")

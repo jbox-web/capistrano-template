@@ -1,49 +1,40 @@
+# frozen_string_literal: true
+
+require "capistrano/template/helpers/renderer"
+require "capistrano/template/helpers/template_digester"
+
 module Capistrano
   module Template
     module Helpers
-      require 'capistrano/template/helpers/renderer'
-      require 'capistrano/template/helpers/template_digester'
-
-      # rubocop: disable Metrics/ClassLength
       class Uploader
-        attr_accessor :io,
-                      :digest,
-                      :full_to_path,
-                      :digest_cmd,
-                      :mode,
-                      :user,
-                      :group,
-                      :user_test_cmd,
-                      :group_test_cmd,
-                      :remote_handler,
-                      :mode_test_cmd
+        attr_reader   :remote_handler, :io, :digest, :full_to_path, :group, :mode
+        attr_writer   :digest_cmd
+        attr_accessor :user
 
+        # rubocop:disable Metrics/MethodLength
         def initialize(full_to_path, remote_handler,
-            mode: 0640,
-            mode_test_cmd: nil,
-            user: nil,
-            user_test_cmd: nil,
-            group: nil,
-            group_test_cmd: nil,
-            digest: nil,
-            digest_cmd: nil,
-            io: nil
-        )
-          self.remote_handler = remote_handler
-
-          self.full_to_path = full_to_path
-
-          self.digest_cmd = digest_cmd
-          self.mode = mode
-          self.mode_test_cmd = mode_test_cmd
-          self.user = user
-          self.user_test_cmd = user_test_cmd
-          self.group = group
-          self.group_test_cmd = group_test_cmd
-
-          self.io = io
-          self.digest = digest
+                       mode: 0o640,
+                       mode_test_cmd: nil,
+                       user: nil,
+                       user_test_cmd: nil,
+                       group: nil,
+                       group_test_cmd: nil,
+                       digest: nil,
+                       digest_cmd: nil,
+                       io: nil)
+          @remote_handler = remote_handler
+          @full_to_path   = full_to_path
+          @digest_cmd     = digest_cmd
+          @mode           = mode
+          @mode_test_cmd  = mode_test_cmd
+          @user           = user
+          @user_test_cmd  = user_test_cmd
+          @group          = group
+          @group_test_cmd = group_test_cmd
+          @io             = io
+          @digest         = digest
         end
+        # rubocop:enable Metrics/MethodLength
 
         def call
           upload_as_file
@@ -57,7 +48,7 @@ module Capistrano
             remote_handler.info "copying to: #{full_to_path}"
 
             # just in case owner changed
-            remote_handler.execute 'rm', '-f', full_to_path
+            remote_handler.execute "rm", "-f", full_to_path
 
             remote_handler.upload! io, full_to_path
           else
@@ -72,7 +63,7 @@ module Capistrano
         def set_mode
           if permission_changed?
             remote_handler.info "permission changed for file #{full_to_path} on #{host} set new permissions"
-            remote_handler.execute 'chmod', octal_mode_str, full_to_path
+            remote_handler.execute "chmod", octal_mode_str, full_to_path
           else
             remote_handler.info "permission not changed for file #{full_to_path} on #{host}"
           end
@@ -81,8 +72,7 @@ module Capistrano
         def set_user
           if user_changed?
             remote_handler.info "user changed for file #{full_to_path} on #{host} set new user"
-
-            remote_handler.execute 'sudo', 'chown', user, full_to_path
+            remote_handler.execute "sudo", "chown", user, full_to_path
           else
             remote_handler.info "user not changed for file #{full_to_path} on #{host}"
           end
@@ -91,8 +81,7 @@ module Capistrano
         def set_group
           if group_changed?
             remote_handler.info "group changed for file #{full_to_path} on #{host} set new group"
-
-            remote_handler.execute 'sudo', 'chgrp', group, full_to_path
+            remote_handler.execute "sudo", "chgrp", group, full_to_path
           else
             remote_handler.info "group not changed for file #{full_to_path} on #{host}"
           end
@@ -121,33 +110,25 @@ module Capistrano
         end
 
         def octal_mode_str
-          format '%.4o' , mode
+          format "%.4o", mode
         end
 
         def digest_cmd
-          format @digest_cmd , digest: digest,
-                               path: full_to_path
+          format @digest_cmd, digest: digest, path: full_to_path
         end
 
         def mode_test_cmd
-          format @mode_test_cmd,
-            path: full_to_path,
-            mode: octal_mode_str
+          format @mode_test_cmd, path: full_to_path, mode: octal_mode_str
         end
 
         def user_test_cmd
-          format @user_test_cmd ,
-            path: full_to_path,
-            user: user
+          format @user_test_cmd, path: full_to_path, user: user
         end
 
         def group_test_cmd
-          format @group_test_cmd,
-            path: full_to_path,
-            group: group
+          format @group_test_cmd, path: full_to_path, group: group
         end
       end
-      # rubocop: enable Metrics/ModuleLength
     end
   end
 end
