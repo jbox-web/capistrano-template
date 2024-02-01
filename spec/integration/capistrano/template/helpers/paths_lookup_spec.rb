@@ -11,10 +11,10 @@ RSpec.describe Capistrano::Template::Helpers::PathsLookup do
   end
 
   after do
-    system("rm", "-f", File.join(tmp_folder, template_fullname)) if File.exist? template_fullname
+    FileUtils.rm_f(template_fullname)
   end
 
-  let(:tmp_folder) { File.join(__dir__, "..", "..", "..", "tmp") }
+  let(:tmp_folder) { Dir.tmpdir }
 
   let(:lookup_paths) { ["#{tmp_folder}/%<host>s", tmp_folder.to_s] }
   let(:context) { OpenStruct.new(host: "localhost") }

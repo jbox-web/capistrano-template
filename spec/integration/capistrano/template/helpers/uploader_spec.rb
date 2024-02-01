@@ -16,7 +16,7 @@ RSpec.describe Capistrano::Template::Helpers::Uploader do
   end
 
   before { FileUtils.mkdir_p(tmp_folder) }
-  after { system("rm", "-f", remote_filename) if File.exist? remote_filename }
+  after  { FileUtils.rm_f(remote_filename) }
 
   let(:context) do
     Struct.new(:host).new.tap do |cont|
@@ -39,7 +39,7 @@ RSpec.describe Capistrano::Template::Helpers::Uploader do
     end
   end
 
-  let(:tmp_folder) { File.join(__dir__, "..", "..", "..", "tmp") }
+  let(:tmp_folder) { Dir.tmpdir }
 
   let(:rendered_template_content) { "my -- content" }
   let(:as_io) { StringIO.new(rendered_template_content) }
@@ -47,9 +47,9 @@ RSpec.describe Capistrano::Template::Helpers::Uploader do
   let(:remote_filename) { File.join(tmp_folder, "my_template") }
 
   let(:digest) { Digest::MD5.hexdigest(rendered_template_content) }
-  let(:digest_cmd) { %{test "Z$(openssl md5 %<path>s| sed "s/^.*= *//")" = "Z%<digest>s" } }
+  let(:digest_cmd) { %{test "Z$(openssl md5 %<path>s | sed "s/^.*= *//")" = "Z%<digest>s" } }
 
-  let(:mode_test_cmd) { %{ [ "Z$(printf "%%.4o" 0$(stat -c "%%a" %<path>s 2>/dev/null ||  stat -f "%%A" %<path>s))" != "Z%<mode>s" ] } }
+  let(:mode_test_cmd) { %{ [ "Z$(printf "%%.4o" 0$(stat -c "%%a" %<path>s 2>/dev/null || stat -f "%%A" %<path>s))" != "Z%<mode>s" ] } }
 
   describe "#call" do
     it "uploads a template when content has changed" do

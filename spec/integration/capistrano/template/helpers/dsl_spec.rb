@@ -18,8 +18,8 @@ RSpec.describe Capistrano::Template::Helpers::DSL do
       def initialize
         self.data = {
           templating_digester: ->(data) { Digest::MD5.hexdigest(data) },
-          templating_digest_cmd: %(echo "%<digest>s %<path>s" | md5sum -c --status ),
-          templating_mode_test_cmd: %{ [ "Z$(printf "%%.4o" 0$(stat -c "%%a" %<path>s 2>/dev/null ||  stat -f "%%A" %<path>s))" != "Z%<mode>s" ] },
+          templating_digest_cmd: %(echo "%<digest>s %<path>s" | md5sum -c --status),
+          templating_mode_test_cmd: %{ [ "Z$(printf "%%.4o" 0$(stat -c "%%a" %<path>s 2>/dev/null || stat -f "%%A" %<path>s))" != "Z%<mode>s" ] },
           templating_user_test_cmd: %{ [ "Z$(stat -c "%%U" %<path>s 2>/dev/null)" != "Z%<user>s" ] },
           templating_group_test_cmd: %{ [ "Z$(stat -c "%%G" %<path>s 2>/dev/null)" != "Z%<group>s" ] }
         }
@@ -73,7 +73,7 @@ RSpec.describe Capistrano::Template::Helpers::DSL do
     end
   end
   let(:template_name) { "my_template.erb" }
-  let(:tmp_folder) { File.join(__dir__, "..", "..", "..", "tmp") }
+  let(:tmp_folder) { Dir.tmpdir }
   let(:template_content) { "<%=var1%> -- <%=var2%> -- <%= my_local %>" }
   let(:expected_content) { "my -- content -- local content" }
   let(:locals) { { "my_local" => "local content" } }
@@ -81,10 +81,8 @@ RSpec.describe Capistrano::Template::Helpers::DSL do
   let(:template_fullname) { File.join(tmp_folder, template_name) }
   let(:remote_filename) { File.join(tmp_folder, "my_template") }
   let(:digest_algo) { ->(data) { Digest::MD5.hexdigest(data) } }
-  let(:digest_cmd) { %{test "Z$(openssl md5 %<path>s| sed "s/^.*= *//")" = "Z%<digest>s" } }
-  let(:mode_test_cmd) do
-    %{ [ "Z$(printf "%%.4o" 0$(stat -c "%%a" %<path>s 2>/dev/null ||  stat -f "%%A" %<path>s))" != "Z%<mode>s" ] }
-  end
+  let(:digest_cmd) { %{test "Z$(openssl md5 %<path>s | sed "s/^.*= *//")" = "Z%<digest>s" } }
+  let(:mode_test_cmd) { %{ [ "Z$(printf "%%.4o" 0$(stat -c "%%a" %<path>s 2>/dev/null || stat -f "%%A" %<path>s))" != "Z%<mode>s" ] } }
 
   before do
     FileUtils.mkdir_p(tmp_folder)
@@ -96,7 +94,7 @@ RSpec.describe Capistrano::Template::Helpers::DSL do
       template_fullname,
       remote_filename
     ].each do |f|
-      system("rm", "-f", f) if File.exist? f
+      FileUtils.rm_f(f)
     end
   end
 
