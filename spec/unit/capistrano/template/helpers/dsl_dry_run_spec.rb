@@ -1,6 +1,10 @@
-require 'spec_helper'
+# frozen_string_literal: true
+
+require "spec_helper"
 
 RSpec.describe Capistrano::Template::Helpers::DSL do
+  subject { dummy_class.new }
+
   let(:dummy_class) do
     Class.new do
       include Capistrano::Template::Helpers::DSL
@@ -14,10 +18,8 @@ RSpec.describe Capistrano::Template::Helpers::DSL do
     end
   end
 
-  subject { dummy_class.new }
-
-  describe '#template dry run' do
-    it 'do nothing' do
+  describe "#template dry run" do
+    it "do nothing" do
       expect(subject).not_to receive(:_template_factory)
     end
   end

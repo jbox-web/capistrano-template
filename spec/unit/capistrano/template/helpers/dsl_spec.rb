@@ -1,6 +1,10 @@
-require 'spec_helper'
+# frozen_string_literal: true
+
+require "spec_helper"
 
 RSpec.describe Capistrano::Template::Helpers::DSL do
+  subject { dummy_class.new }
+
   let(:dummy_class) do
     Class.new do
       include Capistrano::Template::Helpers::DSL
@@ -9,16 +13,16 @@ RSpec.describe Capistrano::Template::Helpers::DSL do
       def initialize
         self.file_exists = true
         self.data = {
-          templating_paths: ['/tmp'],
+          templating_paths: ["/tmp"]
         }
       end
 
       def host
-        'localhost'
+        "localhost"
       end
 
       def release_path
-        '/var/www/app/releases/20140510'
+        "/var/www/app/releases/20140510"
       end
 
       def pwd_path
@@ -41,12 +45,10 @@ RSpec.describe Capistrano::Template::Helpers::DSL do
     end
   end
 
-  subject { dummy_class.new }
+  let(:template_name) { "my_template.erb" }
 
-  let(:template_name) { 'my_template.erb' }
-
-  describe '#template' do
-    it 'raises an exception when template does not exists' do
+  describe "#template" do
+    it "raises an exception when template does not exists" do
       subject.file_exists = false
       expect { subject.template(template_name) }.to raise_error(ArgumentError, /template #{template_name} not found Paths/)
     end

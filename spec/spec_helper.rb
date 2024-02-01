@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'simplecov'
+require "simplecov"
 
 # Start SimpleCov
 SimpleCov.start do
-  add_filter 'spec/'
+  add_filter "spec/"
 end
 
 # Configure RSpec
@@ -21,4 +21,4 @@ RSpec.configure do |config|
   config.disable_monkey_patching!
 end
 
-require 'capistrano/template'
+require "capistrano/template"

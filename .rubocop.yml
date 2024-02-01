@@ -8,7 +8,7 @@ AllCops:
   TargetRubyVersion: 3.0
   Exclude:
     - bin/*
-    - spec/**/*
+    - spec/dummy_app/**/*
 
 Style/Documentation:
   Enabled: false
@@ -29,4 +29,7 @@ Gemspec/DevelopmentDependencies:
   Enabled: false
 
 Gemspec/RequireMFA:
+  Enabled: false
+
+RSpec/NamedSubject:
   Enabled: false
