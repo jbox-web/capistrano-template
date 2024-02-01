@@ -23,4 +23,20 @@ RSpec.configure do |config|
   config.disable_monkey_patching!
 end
 
+class FakeContext
+  attr_reader :host
+
+  def initialize(host: "localhost")
+    @host = host
+  end
+end
+
+class FakeRenderer
+  attr_reader :as_str
+
+  def initialize(as_str:)
+    @as_str = as_str
+  end
+end
+
 require "capistrano/template"

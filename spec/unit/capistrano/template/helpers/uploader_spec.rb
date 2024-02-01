@@ -19,7 +19,7 @@ RSpec.describe Capistrano::Template::Helpers::Uploader do
   end
 
   let(:upload_handler) do
-    OpenStruct.new(host: "localhost").tap do |cont|
+    FakeContext.new.tap do |cont|
       allow(cont).to receive(:info)
       allow(cont).to receive(:error)
     end

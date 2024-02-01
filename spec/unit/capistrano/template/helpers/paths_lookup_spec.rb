@@ -6,7 +6,7 @@ RSpec.describe Capistrano::Template::Helpers::PathsLookup do
   subject { described_class.new(lookup_paths, context) }
 
   let(:lookup_paths) { ["path1/%<host>s", "path2"] }
-  let(:context) { OpenStruct.new(host: "localhost") }
+  let(:context) { FakeContext.new }
   let(:template_name) { "my_template" }
 
   describe "#template_exists?" do

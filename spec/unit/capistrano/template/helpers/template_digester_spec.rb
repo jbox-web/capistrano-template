@@ -6,7 +6,7 @@ RSpec.describe Capistrano::Template::Helpers::TemplateDigester do
   subject { described_class.new(renderer, digest_algo) }
 
   let(:text) { "my very long text" }
-  let(:renderer) { OpenStruct.new(as_str: text) }
+  let(:renderer) { FakeRenderer.new(as_str: text) }
   let(:digest_algo) { ->(data) { Digest::MD5.hexdigest(data) } }
 
   describe "#digest" do

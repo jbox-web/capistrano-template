@@ -33,3 +33,15 @@ Gemspec/RequireMFA:
 
 RSpec/NamedSubject:
   Enabled: false
+
+# FIXME
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+# FIXME
+RSpec/MessageSpies:
+  Enabled: false
+
+# FIXME
+RSpec/SubjectStub:
+  Enabled: false

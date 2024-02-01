@@ -6,12 +6,21 @@ RSpec.describe Capistrano::Template::Helpers::Renderer do
   subject { described_class.new(template_name, context, reader: reader, locals: locals) }
 
   let(:context) do
-    cnt = OpenStruct.new(var1: "my", var2: "content")
-    cnt.extend(Capistrano::Template::Helpers::DSL)
-    def cnt.template_file(_)
-      "partial.conf"
+    klass = Class.new do
+      def var1
+        "my"
+      end
+
+      def var2
+        "content"
+      end
+
+      def template_file(_)
+        "partial.conf"
+      end
     end
-    cnt
+    klass.extend(Capistrano::Template::Helpers::DSL)
+    klass.new
   end
 
   let(:locals) { { "my_local" => "local content" } }

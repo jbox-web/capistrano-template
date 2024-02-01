@@ -72,7 +72,7 @@ RSpec.describe Capistrano::Template::Helpers::DSL do
       end
     end
   end
-  let(:template_name) { "my_template.erb" }
+
   let(:tmp_folder) { Dir.tmpdir }
   let(:template_content) { "<%=var1%> -- <%=var2%> -- <%= my_local %>" }
   let(:expected_content) { "my -- content -- local content" }

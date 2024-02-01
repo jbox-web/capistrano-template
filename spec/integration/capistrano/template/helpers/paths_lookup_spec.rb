@@ -17,7 +17,7 @@ RSpec.describe Capistrano::Template::Helpers::PathsLookup do
   let(:tmp_folder) { Dir.tmpdir }
 
   let(:lookup_paths) { ["#{tmp_folder}/%<host>s", tmp_folder.to_s] }
-  let(:context) { OpenStruct.new(host: "localhost") }
+  let(:context) { FakeContext.new }
 
   let(:template_content) { "<%=var1%> -- <%=var2%>" }
   let(:template_name) { "my_template.erb" }
