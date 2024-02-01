@@ -8,7 +8,7 @@ module Capistrano
 
           return if dry_run?
 
-          template = _template_factory.call(template_file(from), self, fetch(:templating_digster), locals)
+          template = _template_factory.call(template_file(from), self, fetch(:templating_digester), locals)
 
           _uploader_factory.call(get_to(to, from), self,
                                  digest: template.digest,

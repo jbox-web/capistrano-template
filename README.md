@@ -120,7 +120,7 @@ This settings can be changed in your Capfile, deploy.rb or stage file.
 
 | Variable                  | Default                               | Description                           |
 |---------------------------|---------------------------------------|---------------------------------------|
-|`templating_digster`       | <code> -&gt;(data){ OpenSSL::Digest::MD5.hexdigest(data)} </code> | Checksum algorythmous for rendered template to check for remote diffs |
+|`templating_digester`      | <code> -&gt;(data){ OpenSSL::Digest::MD5.hexdigest(data)} </code> | Checksum algorythmous for rendered template to check for remote diffs |
 |`templating_digest_cmd`    | <code>%Q{test "Z$(openssl md5 %&lt;path&gt;s &#124; sed 's/^.*= *//')" = "Z%&lt;digest&gt;s" }</code> | Remote command to validate a digest. Format placeholders path is replaces by full `path` to the remote file and `digest` with the digest calculated in capistrano. |
 |`templating_mode_test_cmd` | <code>%Q{ &#91; "Z$(printf "%%.4o" 0$(stat -c "%%a" %&lt;path&gt;s 2&gt;/dev/null &#124;&#124;  stat -f "%%A" %&lt;path&gt;s))" != "Z%&lt;mode&gt;s" &#93; }</code> | Test command to check the remote file permissions. |
 |`templating_user_test_cmd` | <code>%Q{ &#91; "Z$(stat -c "%%U" %&lt;path&gt;s 2&gt;/dev/null)" != "Z%&lt;user&gt;s" &#93; }</code> | Test command to check the remote file permissions. |
