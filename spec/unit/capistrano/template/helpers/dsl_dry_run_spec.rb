@@ -1,34 +1,24 @@
 require 'spec_helper'
 
-module Capistrano
-  module Template
-    module Helpers
-      module Unit # protect from other dummy classes
-        module DSLSpec
-          class DummyDryRun
-            include DSL
-            def template_exists?
-              true
-            end
-
-            def dry_run?
-              true
-            end
-          end
-        end
+RSpec.describe Capistrano::Template::Helpers::DSL do
+  let(:dummy_class) do
+    Class.new do
+      include Capistrano::Template::Helpers::DSL
+      def template_exists?
+        true
       end
 
-      describe DSL do
-        subject do
-          Unit::DSLSpec::DummyDryRun.new
-        end
-
-        describe '#template dry run' do
-          it 'do nothing' do
-            expect(subject).not_to receive(:_template_factory)
-          end
-        end
+      def dry_run?
+        true
       end
+    end
+  end
+
+  subject { dummy_class.new }
+
+  describe '#template dry run' do
+    it 'do nothing' do
+      expect(subject).not_to receive(:_template_factory)
     end
   end
 end

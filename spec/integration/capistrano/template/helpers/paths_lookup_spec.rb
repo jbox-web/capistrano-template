@@ -1,48 +1,35 @@
 require 'spec_helper'
 
-module Capistrano
-  module Template
-    module Helpers
-      # rubocop: disable Metrics/BlockLength
-      describe PathsLookup do
-        subject do
-          PathsLookup.new(lookup_paths, context)
-        end
+RSpec.describe Capistrano::Template::Helpers::PathsLookup do
+  before do
+    Dir.mkdir(tmp_folder) unless Dir.exist? tmp_folder
+    File.write(template_fullname, template_content, mode: 'w')
+  end
 
-        let(:tmp_folder) { File.join(__dir__, '..', '..', '..', 'tmp') }
+  after do
+    if File.exist? template_fullname
+      system('rm', '-f', File.join(tmp_folder, template_fullname))
+    end
+  end
 
-        let(:lookup_paths) { ["#{tmp_folder}/%<host>s", "#{tmp_folder}"] }
-        let(:context) { OpenStruct.new(host: 'localhost') }
+  subject { described_class.new(lookup_paths, context) }
 
-        let(:template_content) { '<%=var1%> -- <%=var2%>' }
-        let(:template_name) { 'my_template.erb' }
-        let(:template_fullname) { File.join(tmp_folder, template_name) }
+  let(:tmp_folder) { File.join(__dir__, '..', '..', '..', 'tmp') }
 
-        before :each do
-          Dir.mkdir(tmp_folder) unless Dir.exist? tmp_folder
-          File.write(template_fullname, template_content, mode: 'w')
-        end
+  let(:lookup_paths) { ["#{tmp_folder}/%<host>s", "#{tmp_folder}"] }
+  let(:context) { OpenStruct.new(host: 'localhost') }
 
-        after :each do
-          if File.exist? template_fullname
-            system('rm', '-f', File.join(tmp_folder, template_fullname))
-          end
-        end
+  let(:template_content) { '<%=var1%> -- <%=var2%>' }
+  let(:template_name) { 'my_template.erb' }
+  let(:template_fullname) { File.join(tmp_folder, template_name) }
 
-        describe '#template_exists?' do
+  describe '#template_exists?' do
+    it 'returns true when a template file exists' do
+      expect(subject.template_exists?(template_name)).to be_truthy
+    end
 
-          it 'returns true when a template file exists' do
-            expect(subject.template_exists?(template_name)).to be_truthy
-          end
-
-          it 'returns false when a template does not file exists' do
-            expect(subject.template_exists?("#{template_name}.not_exists")).to be_falsy
-          end
-
-        end
-
-      end
-      # rubocop: enable Metrics/BlockLength
+    it 'returns false when a template does not file exists' do
+      expect(subject.template_exists?("#{template_name}.not_exists")).to be_falsy
     end
   end
 end
