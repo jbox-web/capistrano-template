@@ -37,7 +37,7 @@ module Capistrano
         end
 
         def _uploader_factory
-          ->(*args) { Uploader.new(*args) }
+          ->(*args, **kwargs) { Uploader.new(*args, **kwargs) }
         end
 
         def _paths_factory
