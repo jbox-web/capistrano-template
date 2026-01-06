@@ -3,3 +3,14 @@
 source "https://rubygems.org"
 
 gemspec
+
+# Dev libs
+gem "pry"
+gem "rake"
+gem "rspec"
+gem "simplecov"
+
+# Dev tools / linter
+gem "rubocop",       require: false
+gem "rubocop-rake",  require: false
+gem "rubocop-rspec", require: false
