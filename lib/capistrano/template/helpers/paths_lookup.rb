@@ -19,7 +19,7 @@ module Capistrano
           paths_for_file(filename).find { |path| existence_check(path) }
         end
 
-        def existence_check(path)
+        def existence_check(path) # rubocop:disable Naming/PredicateMethod
           File.exist?(path)
         end
 
