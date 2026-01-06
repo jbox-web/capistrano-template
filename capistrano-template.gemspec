@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.description   = "A capistrano 3 plugin that aids in rendering erb templates and uploads the content to the server if the file does not exists at the remote host or the content did change"
   s.license       = "MIT"
 
-  s.required_ruby_version = ">= 3.0.0"
+  s.required_ruby_version = ">= 3.2.0"
 
   s.files = Dir["README.md", "CHANGELOG.md", "LICENSE", "lib/**/*.rb"]
 

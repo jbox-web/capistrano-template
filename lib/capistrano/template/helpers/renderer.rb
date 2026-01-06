@@ -33,7 +33,7 @@ module Capistrano
           StringIO.new(as_str)
         end
 
-        def method_missing(method_name, *args, &block)
+        def method_missing(method_name, *args, &)
           if locals.key?(method_name)
             locals[method_name]
           else

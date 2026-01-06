@@ -65,9 +65,9 @@ module Capistrano
           ->(from, context, digester, locals) { TemplateDigester.new(Renderer.new(from, context, locals: locals), digester) }
         end
 
-        def method_missing(method_name, *args, &block)
+        def method_missing(method_name, *args, &)
           if self.class.respond_to?(method_name)
-            self.class.send(method_name, *args, &block)
+            self.class.send(method_name, *args, &)
           else
             super
           end
