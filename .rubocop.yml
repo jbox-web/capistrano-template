@@ -19,6 +19,10 @@ Style/StringLiterals:
 Style/ArgumentsForwarding:
   Enabled: false
 
+Style/OneClassPerFile:
+  Exclude:
+    - spec/support/models.rb
+
 Metrics/ParameterLists:
   Enabled: false
 
