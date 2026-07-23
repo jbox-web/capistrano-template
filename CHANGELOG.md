@@ -1,6 +1,12 @@
 0.0.10(next)
 =================
 
+#### Fixes
+
+* Upload templates atomically (temp file + `mv`) so a failed upload no longer destroys the existing remote file.
+* Preserve trailing newlines when rendering partials via `render`.
+* Shell-escape paths in `remote_path_for` to handle spaces and shell metacharacters.
+
 0.0.9 (23/06/2017)
 ==================
 

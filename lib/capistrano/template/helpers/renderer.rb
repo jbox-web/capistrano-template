@@ -53,7 +53,11 @@ module Capistrano
         end
 
         def indented_content(content, indent)
-          content.split("\n").map { |line| "#{' ' * indent}#{line}" }.join("\n")
+          prefix = " " * indent
+          # split with a -1 limit keeps trailing empty fields, so trailing
+          # newlines are preserved; blank lines are left un-indented to avoid
+          # emitting trailing whitespace.
+          content.split("\n", -1).map { |line| line.empty? ? line : "#{prefix}#{line}" }.join("\n")
         end
 
         protected

@@ -47,10 +47,13 @@ module Capistrano
           if file_changed?
             remote_handler.info "copying to: #{full_to_path}"
 
-            # just in case owner changed
-            remote_handler.execute "rm", "-f", full_to_path
+            tmp_path = "#{full_to_path}.#{digest}.tmp"
 
-            remote_handler.upload! io, full_to_path
+            # upload to a temporary sibling first, then move it into place so a
+            # failed upload never destroys the existing file and readers never
+            # observe a missing file. mv -f also overwrites when the owner changed.
+            remote_handler.upload! io, tmp_path
+            remote_handler.execute "mv", "-f", tmp_path, full_to_path
           else
             remote_handler.info "File #{full_to_path} on host #{host} not changed"
           end

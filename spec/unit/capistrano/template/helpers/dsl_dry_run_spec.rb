@@ -9,7 +9,7 @@ RSpec.describe Capistrano::Template::Helpers::DSL do
     Class.new do
       include Capistrano::Template::Helpers::DSL
 
-      def template_exists?
+      def template_exists?(*)
         true
       end
 
@@ -20,8 +20,10 @@ RSpec.describe Capistrano::Template::Helpers::DSL do
   end
 
   describe "#template dry run" do
-    it "do nothing" do
+    it "neither renders nor uploads" do
       expect(subject).not_to receive(:_template_factory)
+
+      subject.template("my_template")
     end
   end
 end

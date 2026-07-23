@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform      = Gem::Platform::RUBY
   s.authors       = ["Dieter Späth"]
   s.email         = ["d.spaeth@faber.de"]
-  s.homepage      = "https://github.com/faber-lotto/capistrano-template"
+  s.homepage      = "https://github.com/jbox-web/capistrano-template"
   s.summary       = "Erb-Template rendering and upload for capistrano 3"
   s.description   = "A capistrano 3 plugin that aids in rendering erb templates and uploads the content to the server if the file does not exists at the remote host or the content did change"
   s.license       = "MIT"

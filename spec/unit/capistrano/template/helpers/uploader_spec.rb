@@ -37,22 +37,22 @@ RSpec.describe Capistrano::Template::Helpers::Uploader do
   let(:user_test_cmd) { %{ [ "Z$(stat -c "%%U" %<path>s 2>/dev/null)" != "Z%<user>s" ] } }
 
   describe "#upload_as_file" do
-    it "uploads changed files" do
+    it "uploads changed files to a temporary path" do
       allow(subject).to receive(:file_changed?).and_return true
       allow(upload_handler).to receive_messages(execute: true, upload!: true)
 
       subject.upload_as_file
 
-      expect(upload_handler).to have_received(:upload!).with(as_io, remote_filename_expented)
+      expect(upload_handler).to have_received(:upload!).with(as_io, "#{remote_filename_expented}.#{digest}.tmp")
     end
 
-    it "deletes a file before upload" do
+    it "atomically moves the temporary file into place" do
       allow(subject).to receive(:file_changed?).and_return true
       allow(upload_handler).to receive_messages(execute: true, upload!: true)
 
       subject.upload_as_file
 
-      expect(upload_handler).to have_received(:execute).with("rm", "-f", remote_filename_expented)
+      expect(upload_handler).to have_received(:execute).with("mv", "-f", "#{remote_filename_expented}.#{digest}.tmp", remote_filename_expented)
     end
 
     it "does not upload unchanged files" do

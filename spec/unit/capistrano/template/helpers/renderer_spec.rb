@@ -46,6 +46,16 @@ RSpec.describe Capistrano::Template::Helpers::Renderer do
     end
   end
 
+  describe "#indented_content" do
+    it "preserves trailing newlines" do
+      expect(subject.indented_content("a\nb\n", 2)).to eq("  a\n  b\n")
+    end
+
+    it "does not indent blank lines" do
+      expect(subject.indented_content("a\n\nb", 2)).to eq("  a\n\n  b")
+    end
+  end
+
   describe ".new" do
     it "is a delegator" do
       expect(context).to receive(:call_it).with(1, 2, 3)

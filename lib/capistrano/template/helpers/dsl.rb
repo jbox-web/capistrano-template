@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "shellwords"
+
 module Capistrano
   module Template
     module Helpers
@@ -53,10 +55,13 @@ module Capistrano
             path = File.dirname(path)
           end
 
-          cd_cmd = "cd #{path}"
-          cd_cmd = "cd #{pwd_path}; #{cd_cmd}" if pwd_path
+          cd_cmd = "cd #{path.shellescape}"
+          cd_cmd = "cd #{pwd_path.shellescape}; #{cd_cmd}" if pwd_path
 
-          remote_path = capture("/bin/bash -c '(#{cd_cmd} && pwd -P) || readlink -sf #{path}'").chomp
+          # inner is escaped for the nested bash; escaping it again quotes the
+          # whole -c argument for the login shell (two levels of shell parsing).
+          inner = "(#{cd_cmd} && pwd -P) || readlink -sf #{path.shellescape}"
+          remote_path = capture("/bin/bash -c #{inner.shellescape}").chomp
 
           includes_filename ? File.join(remote_path, filename) : remote_path
         end

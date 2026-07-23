@@ -3,6 +3,9 @@
 namespace :load do
   # rubocop:disable Rake/Desc
   task :defaults do
+    # templating_digester (local checksum) and templating_digest_cmd (remote
+    # check) must use the SAME algorithm. Overriding one without the other makes
+    # every comparison mismatch, so the file is re-uploaded on every deploy.
     set(:templating_digester,       -> { ->(data) { OpenSSL::Digest::MD5.hexdigest(data) } })
     set :templating_digest_cmd,     %{test "Z$(openssl md5 %<path>s| sed 's/^.*= *//')" = "Z%<digest>s" } # alternative %Q{echo "%<digest>s %<path>s" | md5sum -c --status }  should return true when the file content is the same
     set :templating_mode_test_cmd,  %{ [ "Z$(printf "%%.4o" 0$(stat -c "%%a" %<path>s 2>/dev/null ||  stat -f "%%A" %<path>s))" != "Z%<mode>s" ] } # mac uses different mode formatter
